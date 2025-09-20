@@ -1,13 +1,57 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { useState } from "react";
+import { MainLayout } from "@/components/layout/MainLayout";
+import { Dashboard } from "@/components/dashboard/Dashboard";
+import { PayslipSection } from "@/components/payslips/PayslipSection";
+import { RequestsSection } from "@/components/requests/RequestsSection";
 
 const Index = () => {
+  const [activeTab, setActiveTab] = useState("dashboard");
+
+  const renderContent = () => {
+    switch (activeTab) {
+      case "dashboard":
+        return <Dashboard />;
+      case "payslips":
+        return <PayslipSection />;
+      case "requests":
+        return <RequestsSection />;
+      case "calendar":
+        return (
+          <div className="text-center py-12">
+            <h2 className="text-2xl font-bold mb-4">Calendrier des congés</h2>
+            <p className="text-muted-foreground">Cette section sera développée prochainement</p>
+          </div>
+        );
+      case "communications":
+        return (
+          <div className="text-center py-12">
+            <h2 className="text-2xl font-bold mb-4">Communications RH</h2>
+            <p className="text-muted-foreground">Cette section sera développée prochainement</p>
+          </div>
+        );
+      case "notifications":
+        return (
+          <div className="text-center py-12">
+            <h2 className="text-2xl font-bold mb-4">Notifications</h2>
+            <p className="text-muted-foreground">Cette section sera développée prochainement</p>
+          </div>
+        );
+      case "profile":
+        return (
+          <div className="text-center py-12">
+            <h2 className="text-2xl font-bold mb-4">Mon profil</h2>
+            <p className="text-muted-foreground">Cette section sera développée prochainement</p>
+          </div>
+        );
+      default:
+        return <Dashboard />;
+    }
+  };
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="mb-4 text-4xl font-bold">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
-      </div>
-    </div>
+    <MainLayout activeTab={activeTab} onTabChange={setActiveTab}>
+      {renderContent()}
+    </MainLayout>
   );
 };
 
