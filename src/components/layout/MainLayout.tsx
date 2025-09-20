@@ -10,9 +10,9 @@ interface MainLayoutProps {
 
 export function MainLayout({ children, activeTab, onTabChange }: MainLayoutProps) {
   const mockUser = {
-    name: "Marie Dubois",
-    role: "Développeuse Senior",
-    department: "IT",
+    name: "Hakim Berrached ",
+    role: "Moudir La Paie",
+    department: "DRH",
     employeeId: "EMP001"
   };
 
