@@ -3,6 +3,7 @@ import { MainLayout } from "@/components/layout/MainLayout";
 import { Dashboard } from "@/components/dashboard/Dashboard";
 import { PayslipSection } from "@/components/payslips/PayslipSection";
 import { RequestsSection } from "@/components/requests/RequestsSection";
+import { ApprovalInterface } from "@/components/workflow/ApprovalInterface";
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState("dashboard");
@@ -15,6 +16,8 @@ const Index = () => {
         return <PayslipSection />;
       case "requests":
         return <RequestsSection />;
+      case "approvals":
+        return <ApprovalInterface />;
       case "calendar":
         return (
           <div className="text-center py-12">

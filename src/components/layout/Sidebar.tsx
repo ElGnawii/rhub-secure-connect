@@ -10,7 +10,8 @@ import {
   LogOut,
   CreditCard,
   ClipboardList,
-  Bell
+  Bell,
+  CheckCircle
 } from "lucide-react";
 
 interface SidebarProps {
@@ -22,6 +23,7 @@ const menuItems = [
   { id: "dashboard", label: "Tableau de bord", icon: LayoutDashboard },
   { id: "payslips", label: "Bulletins de paie", icon: CreditCard },
   { id: "requests", label: "Mes demandes", icon: ClipboardList },
+  { id: "approvals", label: "Approbations", icon: CheckCircle },
   { id: "calendar", label: "Congés", icon: Calendar },
   { id: "communications", label: "Communications", icon: MessageSquare },
   { id: "notifications", label: "Notifications", icon: Bell },
