@@ -1,7 +1,11 @@
+import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { PayslipViewer } from "./PayslipViewer";
+import { PayslipUpload } from "./PayslipUpload";
 import { 
   CreditCard, 
   Download, 
@@ -10,7 +14,9 @@ import {
   Calendar,
   Euro,
   FileText,
-  Lock
+  Lock,
+  Upload,
+  Filter
 } from "lucide-react";
 
 const payslips = [
@@ -21,7 +27,13 @@ const payslips = [
     netSalary: "3,245.67",
     date: "2024-10-31",
     status: "Disponible",
-    isPaid: true
+    isPaid: true,
+    employeeId: "EMP001",
+    employeeName: "Jean Dupont",
+    position: "Développeur Senior",
+    department: "IT",
+    workingHours: "151",
+    socialSecurityNumber: "1234567890123"
   },
   {
     id: 2,
@@ -30,7 +42,13 @@ const payslips = [
     netSalary: "3,245.67",
     date: "2024-09-30",
     status: "Disponible",
-    isPaid: true
+    isPaid: true,
+    employeeId: "EMP001",
+    employeeName: "Jean Dupont",
+    position: "Développeur Senior",
+    department: "IT",
+    workingHours: "151",
+    socialSecurityNumber: "1234567890123"
   },
   {
     id: 3,
@@ -39,7 +57,13 @@ const payslips = [
     netSalary: "3,245.67",
     date: "2024-08-31",
     status: "Disponible",
-    isPaid: true
+    isPaid: true,
+    employeeId: "EMP001",
+    employeeName: "Jean Dupont",
+    position: "Développeur Senior",
+    department: "IT",
+    workingHours: "151",
+    socialSecurityNumber: "1234567890123"
   },
   {
     id: 4,
@@ -48,7 +72,13 @@ const payslips = [
     netSalary: "3,245.67",
     date: "2024-07-31",
     status: "Disponible",
-    isPaid: true
+    isPaid: true,
+    employeeId: "EMP001",
+    employeeName: "Jean Dupont",
+    position: "Développeur Senior",
+    department: "IT",
+    workingHours: "151",
+    socialSecurityNumber: "1234567890123"
   },
   {
     id: 5,
@@ -57,7 +87,13 @@ const payslips = [
     netSalary: "3,245.67",
     date: "2024-06-30",
     status: "Disponible",
-    isPaid: true
+    isPaid: true,
+    employeeId: "EMP001",
+    employeeName: "Jean Dupont",
+    position: "Développeur Senior",
+    department: "IT",
+    workingHours: "151",
+    socialSecurityNumber: "1234567890123"
   },
   {
     id: 6,
@@ -66,7 +102,13 @@ const payslips = [
     netSalary: "3,245.67",
     date: "2024-05-31",
     status: "Disponible",
-    isPaid: true
+    isPaid: true,
+    employeeId: "EMP001",
+    employeeName: "Jean Dupont",
+    position: "Développeur Senior",
+    department: "IT",
+    workingHours: "151",
+    socialSecurityNumber: "1234567890123"
   }
 ];
 
@@ -78,6 +120,26 @@ const currentYearStats = {
 };
 
 export function PayslipSection() {
+  const [selectedPayslip, setSelectedPayslip] = useState<typeof payslips[0] | null>(null);
+  const [isViewerOpen, setIsViewerOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedYear, setSelectedYear] = useState("2024");
+  const [showUploadSection, setShowUploadSection] = useState(false);
+
+  const handleViewPayslip = (payslip: typeof payslips[0]) => {
+    setSelectedPayslip(payslip);
+    setIsViewerOpen(true);
+  };
+
+  const filteredPayslips = payslips.filter(payslip => {
+    const matchesSearch = payslip.month.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesYear = payslip.month.includes(selectedYear);
+    return matchesSearch && matchesYear;
+  });
+
+  // Check if user has admin rights (this would come from auth context)
+  const hasAdminRights = true; // Simulate admin access
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -89,10 +151,25 @@ export function PayslipSection() {
           </p>
         </div>
         <div className="flex items-center space-x-2">
-          <Lock className="w-4 h-4 text-success" />
-          <span className="text-sm text-success font-medium">Accès sécurisé</span>
+          <div className="flex items-center space-x-2">
+            <Lock className="w-4 h-4 text-success" />
+            <span className="text-sm text-success font-medium">Accès sécurisé</span>
+          </div>
+          {hasAdminRights && (
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={() => setShowUploadSection(!showUploadSection)}
+            >
+              <Upload className="w-4 h-4 mr-2" />
+              {showUploadSection ? 'Fermer gestion' : 'Gestion RH'}
+            </Button>
+          )}
         </div>
       </div>
+
+      {/* Admin Upload Section */}
+      {showUploadSection && hasAdminRights && <PayslipUpload />}
 
       {/* Annual summary */}
       <Card className="gradient-card shadow-corporate">
@@ -142,16 +219,25 @@ export function PayslipSection() {
               <Input
                 placeholder="Rechercher par mois ou année..."
                 className="pl-10"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
             <div className="flex space-x-2">
-              <Button variant="outline">
-                <Calendar className="w-4 h-4 mr-2" />
-                2024
-              </Button>
-              <Button variant="outline">
-                <Calendar className="w-4 h-4 mr-2" />
-                2023
+              <Select value={selectedYear} onValueChange={setSelectedYear}>
+                <SelectTrigger className="w-32">
+                  <Calendar className="w-4 h-4 mr-2" />
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="2024">2024</SelectItem>
+                  <SelectItem value="2023">2023</SelectItem>
+                  <SelectItem value="2022">2022</SelectItem>
+                </SelectContent>
+              </Select>
+              <Button variant="outline" size="sm">
+                <Filter className="w-4 h-4 mr-2" />
+                Filtrer
               </Button>
             </div>
           </div>
@@ -171,7 +257,13 @@ export function PayslipSection() {
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
-            {payslips.map((payslip) => (
+            {filteredPayslips.length === 0 ? (
+              <div className="text-center py-8">
+                <FileText className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                <p className="text-muted-foreground">Aucune fiche de paie trouvée pour les critères sélectionnés.</p>
+              </div>
+            ) : (
+              filteredPayslips.map((payslip) => (
               <div 
                 key={payslip.id} 
                 className="flex items-center justify-between p-4 bg-accent/30 rounded-lg border border-border transition-smooth hover:bg-accent/50 hover:shadow-md"
@@ -195,18 +287,27 @@ export function PayslipSection() {
                     {payslip.status}
                   </Badge>
                   <div className="flex space-x-2">
-                    <Button variant="outline" size="sm">
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => handleViewPayslip(payslip)}
+                    >
                       <Eye className="w-4 h-4 mr-2" />
                       Consulter
                     </Button>
-                    <Button size="sm" className="gradient-primary text-primary-foreground">
+                    <Button 
+                      size="sm" 
+                      className="gradient-primary text-primary-foreground"
+                      onClick={() => handleViewPayslip(payslip)}
+                    >
                       <Download className="w-4 h-4 mr-2" />
                       Télécharger
                     </Button>
                   </div>
                 </div>
               </div>
-            ))}
+              ))
+            )}
           </div>
         </CardContent>
       </Card>
@@ -226,6 +327,13 @@ export function PayslipSection() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Payslip Viewer Dialog */}
+      <PayslipViewer 
+        payslip={selectedPayslip}
+        isOpen={isViewerOpen}
+        onClose={() => setIsViewerOpen(false)}
+      />
     </div>
   );
 }
