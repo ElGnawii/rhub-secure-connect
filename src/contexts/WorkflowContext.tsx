@@ -192,8 +192,8 @@ export function WorkflowProvider({ children }: { children: ReactNode }) {
     const request: WorkflowRequest = {
       ...newRequest,
       id,
-      status: 'draft',
-      currentStep: 0,
+      status: 'submitted',
+      currentStep: 1,
       steps,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
@@ -201,8 +201,8 @@ export function WorkflowProvider({ children }: { children: ReactNode }) {
 
     setRequests(prev => [...prev, request]);
     toast({
-      title: "Demande créée",
-      description: "Votre demande a été créée en brouillon."
+      title: "Demande créée et soumise",
+      description: "Votre demande a été soumise et est en cours de traitement."
     });
   };
 
