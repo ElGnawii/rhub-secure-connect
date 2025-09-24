@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Bell, Search, User } from "lucide-react";
+import { Bell, Search, User, LogOut } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface HeaderProps {
   userName: string;
@@ -8,6 +9,8 @@ interface HeaderProps {
 }
 
 export function Header({ userName, userRole }: HeaderProps) {
+  const { logout } = useAuth();
+
   return (
     <header className="h-16 gradient-card border-b border-border shadow-sm flex items-center justify-between px-6">
       {/* Search */}
@@ -41,6 +44,9 @@ export function Header({ userName, userRole }: HeaderProps) {
             <p className="text-sm font-medium text-foreground">{userName}</p>
             <p className="text-xs text-muted-foreground">{userRole}</p>
           </div>
+          <Button variant="ghost" size="icon" onClick={logout} className="ml-2">
+            <LogOut className="w-4 h-4" />
+          </Button>
         </div>
       </div>
     </header>

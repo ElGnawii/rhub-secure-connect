@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Sidebar } from "./Sidebar";
 import { Header } from "./Header";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -9,18 +10,13 @@ interface MainLayoutProps {
 }
 
 export function MainLayout({ children, activeTab, onTabChange }: MainLayoutProps) {
-  const mockUser = {
-    name: "Hakim Berrached ",
-    role: "Moudir La Paie",
-    department: "DRH",
-    employeeId: "EMP001"
-  };
+  const { user } = useAuth();
 
   return (
     <div className="h-screen flex bg-background">
       <Sidebar activeTab={activeTab} onTabChange={onTabChange} />
       <div className="flex-1 flex flex-col overflow-hidden">
-        <Header userName={mockUser.name} userRole={mockUser.role} />
+        <Header userName={user?.name || ''} userRole={user?.role || ''} />
         <main className="flex-1 overflow-auto p-6">
           {children}
         </main>
