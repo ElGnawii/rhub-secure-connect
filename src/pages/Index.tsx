@@ -4,8 +4,11 @@ import { Dashboard } from "@/components/dashboard/Dashboard";
 import { PayslipSection } from "@/components/payslips/PayslipSection";
 import { RequestsSection } from "@/components/requests/RequestsSection";
 import { ApprovalInterface } from "@/components/workflow/ApprovalInterface";
+import { AdminSection } from "@/components/admin/AdminSection";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Index = () => {
+  const { user } = useAuth();
   const [activeTab, setActiveTab] = useState("dashboard");
 
   const renderContent = () => {
@@ -18,6 +21,13 @@ const Index = () => {
         return <RequestsSection />;
       case "approvals":
         return <ApprovalInterface />;
+      case "admin":
+        return user?.role === 'admin' ? <AdminSection /> : (
+          <div className="text-center py-12">
+            <h2 className="text-2xl font-bold mb-4">Accès refusé</h2>
+            <p className="text-muted-foreground">Vous n'avez pas les permissions pour accéder à cette section</p>
+          </div>
+        );
       case "calendar":
         return (
           <div className="text-center py-12">

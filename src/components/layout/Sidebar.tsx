@@ -11,26 +11,30 @@ import {
   CreditCard,
   ClipboardList,
   Bell,
-  CheckCircle
+  CheckCircle,
+  Shield
 } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface SidebarProps {
   activeTab: string;
   onTabChange: (tab: string) => void;
 }
 
-const menuItems = [
-  { id: "dashboard", label: "Tableau de bord", icon: LayoutDashboard },
-  { id: "payslips", label: "Bulletins de paie", icon: CreditCard },
-  { id: "requests", label: "Mes demandes", icon: ClipboardList },
-  { id: "approvals", label: "Approbations", icon: CheckCircle },
-  { id: "calendar", label: "Congés", icon: Calendar },
-  { id: "communications", label: "Communications", icon: MessageSquare },
-  { id: "notifications", label: "Notifications", icon: Bell },
-  { id: "profile", label: "Mon profil", icon: User },
-];
-
 export function Sidebar({ activeTab, onTabChange }: SidebarProps) {
+  const { user, logout } = useAuth();
+
+  const menuItems = [
+    { id: "dashboard", label: "Tableau de bord", icon: LayoutDashboard },
+    { id: "payslips", label: "Bulletins de paie", icon: CreditCard },
+    { id: "requests", label: "Mes demandes", icon: ClipboardList },
+    { id: "approvals", label: "Approbations", icon: CheckCircle },
+    { id: "calendar", label: "Congés", icon: Calendar },
+    { id: "communications", label: "Communications", icon: MessageSquare },
+    { id: "notifications", label: "Notifications", icon: Bell },
+    { id: "profile", label: "Mon profil", icon: User },
+    ...(user?.role === 'admin' ? [{ id: "admin", label: "Administration", icon: Shield }] : []),
+  ];
   return (
     <div className="w-64 gradient-card border-r border-border shadow-md flex flex-col h-full">
       {/* Logo */}
@@ -83,6 +87,7 @@ export function Sidebar({ activeTab, onTabChange }: SidebarProps) {
         <Button
           variant="ghost"
           className="w-full justify-start text-destructive hover:bg-destructive/10 hover:text-destructive transition-smooth"
+          onClick={logout}
         >
           <LogOut className="w-5 h-5 mr-3" />
           Déconnexion

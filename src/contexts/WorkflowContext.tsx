@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { toast } from '@/hooks/use-toast';
+import { useAdmin } from '@/contexts/AdminContext';
 
 export interface WorkflowStep {
   id: string;
@@ -175,18 +176,19 @@ const initialRequests: WorkflowRequest[] = [
 
 export function WorkflowProvider({ children }: { children: ReactNode }) {
   const [requests, setRequests] = useState<WorkflowRequest[]>(initialRequests);
+  const { getValidatorsByWorkflow } = useAdmin();
 
   const createRequest = (newRequest: Omit<WorkflowRequest, 'id' | 'createdAt' | 'updatedAt'>) => {
     const id = `req_${Date.now()}`;
-    const template = workflowTemplates[newRequest.type] || [];
+    const validatorConfig = getValidatorsByWorkflow(newRequest.type);
     
-    const steps: WorkflowStep[] = template.map((step, index) => ({
-      id: `${id}_step_${index + 1}`,
-      name: step.name,
-      approver: step.approver,
-      approverId: step.approverId,
+    const steps: WorkflowStep[] = validatorConfig.map((validator) => ({
+      id: `${id}_step_${validator.order}`,
+      name: validator.stepName,
+      approver: validator.validatorName,
+      approverId: validator.validatorId,
       status: 'pending' as const,
-      order: step.order
+      order: validator.order
     }));
 
     const request: WorkflowRequest = {
