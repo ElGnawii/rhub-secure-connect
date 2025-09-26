@@ -18,28 +18,6 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Utilisateurs en dur (non sécurisé)
-const MOCK_USERS = [
-  {
-    id: '1',
-    username: 'admin',
-    password: 'admin123',
-    name: 'Hakim Berrached',
-    role: 'Moudir La Paie',
-    department: 'DRH',
-    employeeId: 'EMP001'
-  },
-  {
-    id: '2',
-    username: 'user1',
-    password: 'password123',
-    name: 'Marie Dupont',
-    role: 'Employé',
-    department: 'Comptabilité',
-    employeeId: 'EMP002'
-  }
-];
-
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
 
@@ -51,14 +29,31 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const login = (username: string, password: string): boolean => {
-    const foundUser = MOCK_USERS.find(
-      u => u.username === username && u.password === password
+    // Récupérer les utilisateurs depuis l'AdminContext
+    const savedUsers = localStorage.getItem('admin-users');
+    const adminUsers = savedUsers ? JSON.parse(savedUsers) : [];
+    
+    const foundUser = adminUsers.find(
+      (u: any) => u.username === username && u.password === password && u.isActive
     );
 
     if (foundUser) {
-      const { password: _, ...userWithoutPassword } = foundUser;
-      setUser(userWithoutPassword);
-      localStorage.setItem('currentUser', JSON.stringify(userWithoutPassword));
+      const userForAuth = {
+        id: foundUser.id,
+        username: foundUser.username,
+        name: `${foundUser.firstName} ${foundUser.lastName}`,
+        role: foundUser.role,
+        department: foundUser.role === 'admin' ? 'Administration' : 
+                   foundUser.role === 'hr' ? 'Ressources Humaines' :
+                   foundUser.role === 'manager' ? 'Management' :
+                   foundUser.role === 'training' ? 'Formation' :
+                   foundUser.role === 'budget' ? 'Budget' :
+                   foundUser.role === 'director' ? 'Direction' : 'Employé',
+        employeeId: foundUser.id
+      };
+      
+      setUser(userForAuth);
+      localStorage.setItem('currentUser', JSON.stringify(userForAuth));
       return true;
     }
     return false;
